@@ -1,0 +1,82 @@
+body{
+    margin: 0;
+    background: url(./images/background.jpg) no-repeat center/cover;
+}
+
+.container{
+    max-width: 800px;
+    height: 100%;
+    min-height: 100vh;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    border-top: 10px solid plum;
+    border-bottom: 10px solid plum;
+}
+
+.headline{
+    font-size: 2.5rem;
+}
+
+.input-area{
+    position: relative;
+}
+.input-area .task-input{
+    width: 80%;
+    border: 1px solid plum;
+    transition: padding-top 0.2s ease, margin-top 0.2s ease;
+}
+.input-area .btn-add{
+    border: none;
+    background-color: blanchedalmond;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+}
+.input-area .btn-add:hover{
+    background-color: lightcoral;
+}
+
+.task-area{
+    position: relative;
+    margin-top: 1em;
+    border: 1px solid lightgray;
+}
+.task-area .task-tabs{
+    position: relative;
+    display: flex;
+    border-bottom: 1px solid lightgray;
+}
+#under-line{
+    position: absolute;
+    top: 53px;
+    left: 5px;
+    width: 60px;
+    height: 4px;
+    background-color: lightpink; 
+    padding: 0;
+    transition: .5s;
+}
+.task-area .task-tabs div{
+    padding: 1em;
+    cursor: pointer;
+}
+.task-area .task{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+}
+.task-area .btn-wrap{
+    display: flex;
+    gap: 10px;
+}
+.task-area .btn-wrap button{
+    width: 100px;
+    height: 40px;
+    border: none;
+    background-color: lightpink; 
+    border-radius: 3px;
+    color: #fff;
+}
+.task-area .btn-wrap button:hover{
+    background-color: lightblue;
+    color: lightpink;
+}
