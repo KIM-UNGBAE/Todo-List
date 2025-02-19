@@ -7,8 +7,7 @@ body{
 }
 
 .container{
-    width: 60%;
-    max-width: 600px;
+    max-width: 800px;
     height: 100%;
     min-height: 100vh;
     background-color: #fff;
@@ -34,7 +33,7 @@ body{
 }
 
 #task-input{
-    width: 80%;
+    width: 90%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -68,8 +67,8 @@ body{
 
 #under-line{
     position: absolute;
-    top: 53px;
-    left: 62px;
+    top: 50px;
+    left: 96px;
     width: 40px;
     height: 4px;
     background: linear-gradient(135deg, #E6E6FA, #DDA0DD);
@@ -127,4 +126,5 @@ body{
 .task-done{
     text-decoration: line-through;
     background-color:#ccc;
+    padding: 10px;
 }
