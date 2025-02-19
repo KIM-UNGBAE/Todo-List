@@ -53,16 +53,16 @@ function render(){
             resultHTML +=`<div class="task">
                     <div class="task-done">${taskList[i].taskContent}</div>
                     <div class="btn-wrap">
-                        <button id="check" onclick="toggleComplete('${taskList[i].id}')">Check</button>
-                        <button id="delete" onclick="deleteTask('${taskList[i].id}')">Delete</button>
+                        <button id="check" onclick="toggleComplete('${taskList[i].id}')"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button id="delete" onclick="deleteTask('${taskList[i].id}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`;
         }else{
             resultHTML += `<div class="task">
                     <div>${taskList[i].taskContent}</div>
                     <div class="btn-wrap">
-                        <button id="check" onclick="toggleComplete('${taskList[i].id}')">Check</button>
-                        <button id="delete" onclick="deleteTask('${taskList[i].id}')">Delete</button>
+                        <button id="check" onclick="toggleComplete('${taskList[i].id}')"><i class="fa-solid fa-check"></i></button>
+                        <button id="delete" onclick="deleteTask('${taskList[i].id}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`;
         }
@@ -78,6 +78,7 @@ function toggleComplete(id){
             break;
         }
     }
+
     render();
 }
 
