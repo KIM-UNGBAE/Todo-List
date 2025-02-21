@@ -1,111 +1,71 @@
-// 유저가 값을 입력한다.
-// + 버튼을 클릭하면, 할 일이 추가된다.
-// 유저가 delete버튼을 누르면 할일이 삭제된다.
-// check버튼을 누르면 할일이 끝나면서 밑줄이 간다.
-    // 1. check 버튼을 클릭하는 순간 false를 true로 바꿔준다.
-    // 2. true이면 끝난걸로 간주하고 밑줄 보여주기
-    // 3. false이면 안 끝난걸로 간주하고 그대로
-// 진행중 끝남 탭을 누르면, 언더바가 이동한다.
-// 끝남탭은, 끝난 아이템만, 진행중 탭은 진행중인 아이템만.
-// 전체 탭을 누르면 다시 전체 아이템으로 돌아옴.
-
-
-let taskInput =  document.getElementById("task-input");
+let taskInput = document.getElementById("task-input");
 let btnAdd = document.getElementById("btn-add");
-let tabs = document.querySelectorAll(".task-tabs div");
-let taskList = []; //어레이 만듬
+let tabs = document.querySelectorAll(".task-tabs a");
+let taskList = [];
 let mode = 'all';
-let filterList = [];
-let deletedTasks = [];
 let underLine = document.getElementById("under-line");
-let underLineMenu = document.querySelectorAll(".task-tabs > a > span ");
+let underLineMenu = document.querySelectorAll(".task-tabs span");
 
-// tabs 클릭이벤트
-for(let i = 1; i < tabs.length; i++){
-    tabs[i].addEventListener("click", function(event){filter(event)});
-}
+// 탭 클릭 이벤트
+tabs.forEach(tab => {
+    tab.addEventListener("click", function(event) {
+        filter(event);
+        horizontalIndicator(event);
+    });
+});
 
-// btnAdd 클릭이벤트
+// 추가 버튼 클릭 이벤트
 btnAdd.addEventListener("click", addTask);
 
- // 입력창 클릭하면 placeholder 제거, 입력값 지우기
-taskInput.addEventListener("focus", function() {
-    this.value = "";
-    this.placeholder = "";
-});
-// 입력창에서 벗어나면 placeholder 복원
-taskInput.addEventListener("blur", function() {
-    this.placeholder = "오늘 할 일은?";
-});
-
-// Enter 키
+// 입력창에서 Enter 키 누르면 할 일 추가
 taskInput.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         addTask();
     }
 });
 
+// 할 일 추가 함수
 function addTask() {
-    // 입력값이 비어있지 않은 경우에만 추가
     if (taskInput.value.trim() !== "") {
         let task = {
             id: randomIDGenerate(),
             taskContent: taskInput.value,
             isComplete: false
         };
-
-        taskList.push(task); // 할일 추가
-        console.log(taskList); // 할일 목록 출력
-        render(); // 화면에 렌더링
-
-        // 입력창 비우지 않고 포커스 유지
-        taskInput.focus(); // 커서를 입력창에 계속 두기
-
-        // 입력창 비우기
-        taskInput.value = "";
+        taskList.push(task);
+        render();
+        taskInput.value = ""; // 입력창 비우기
+        taskInput.focus(); // 포커스 유지
     } else {
-        alert("할 일을 입력하세요!"); // 입력값이 없을 경우 경고 메시지
+        alert("할 일을 입력하세요!");
     }
 }
 
-function render(){
-    // 1. 내가 선택한 탭에 따라서
-    let list = [];
-    if(mode === "all"){
-        list = taskList;
-    }else if(mode === "ongoing" || mode === "done"){
-        list = taskList.filter(task => (mode === "ongoing" ? !task.isComplete : task.isComplete));
+// 렌더 함수
+function render() {
+    let list = mode === "all" ? taskList : taskList.filter(task => (mode === "ongoing" ? !task.isComplete : task.isComplete));
+    let resultHTML = '';
+    for (let i = 0; i < list.length; i++) {
+        resultHTML += `
+            <div class="task">
+                <div class="${list[i].isComplete ? 'task-done' : ''}">${list[i].taskContent}</div>
+                <div class="btn-wrap">
+                    <button id="check" onclick="toggleComplete('${list[i].id}')">
+                        <i class="fa-solid fa-${list[i].isComplete ? 'rotate-left' : 'check'}"></i>
+                    </button>
+                    <button id="delete" onclick="deleteTask('${list[i].id}')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>`;
     }
-    // 2. 리스트를 달리 보여준다.
-
-    let resultHTML = ''; //스트링 변수
-
-    for(let i = 0; i < list.length; i++){
-        if(list[i].isComplete == true){
-            resultHTML +=`<div class="task">
-                    <div class="task-done">${list[i].taskContent}</div>
-                    <div class="btn-wrap">
-                        <button id="check" onclick="toggleComplete('${list[i].id}')"><i class="fa-solid fa-rotate-left"></i></button>
-                        <button id="delete" onclick="deleteTask('${list[i].id}')"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
-        }else{
-            resultHTML += `<div class="task">
-                    <div>${list[i].taskContent}</div>
-                    <div class="btn-wrap">
-                        <button id="check" onclick="toggleComplete('${list[i].id}')"><i class="fa-solid fa-check"></i></button>
-                        <button id="delete" onclick="deleteTask('${list[i].id}')"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`;
-        }
-    }
-
     document.getElementById("task-board").innerHTML = resultHTML;
 }
 
-function toggleComplete(id){
-    for(let i = 0; i < taskList.length; i++){
-        if(taskList[i].id == id){
+// 완료 상태 토글 함수
+function toggleComplete(id) {
+    for (let i = 0; i < taskList.length; i++) {
+        if (taskList[i].id === id) {
             taskList[i].isComplete = !taskList[i].isComplete;
             break;
         }
@@ -113,57 +73,33 @@ function toggleComplete(id){
     render();
 }
 
-function deleteTask(id){
-    for(let i = 0; i < taskList.length; i++){
-        if(taskList[i].id == id){
-            taskList.splice(i, 1);
-            alert("정말로 삭제하시겠습니까?")
-            break;
-        }
-    }
+// 삭제 함수
+function deleteTask(id) {
+    taskList = taskList.filter(task => task.id !== id);
+    alert("정말 삭제하시겠습니까?");
     render();
 }
 
-function filter(event){
-    mode = event.target.id;
-    filterList = [];
-
-    if(mode === "all"){
-        // 전체 리스트를 보여준다
-        render();
-    }else if(mode === "ongoing"){
-        // 진행중인 아이템을 보여준다
-        // task.isComplete = false
-        for(let i = 0; i < taskList.length; i++){
-            if(taskList[i].isComplete === false){
-                filterList.push(taskList[i]);
-            }
-        }
-        render();
-        console.log("진행중", filterList);
-    }else if(mode === "done"){
-        // 끝나는 케이스
-        // task.isComplete = true
-        for(let i = 0; i < taskList.length; i++){
-            if(taskList[i].isComplete === true){
-                filterList.push(taskList[i]);
-            }
-        }
-        render();
-    }
+// 필터링 함수
+function filter(event) {
+    mode = event.target.closest("a").id;
+    render();
 }
 
-// task-tabs a태그 클릭시 under-line 이동
-underLineMenu.forEach(menu => menu.addEventListener("click", (e) => horizontalIndicator(e)))
-
-function horizontalIndicator(e){
-    underLine.style.left = e.currentTarget.offsetLeft + "px";
-    underLine.style.width = e.currentTarget.offsetWidth + "px";
-    underLine.style.top = 
-    e.currentTarget.offsetTop + e.currentTarget.offsetHeight + "px";
+// 랜덤 ID 생성 함수
+function randomIDGenerate() {
+    return '_' + Math.random().toString(36).substr(2, 9);
 }
 
-// // 페이지 로드 시 기본으로 첫 번째 탭에 대해 #under-line 설정
+// 언더라인 위치 조정 함수
+function horizontalIndicator(event) {
+    const spanElement = event.currentTarget.querySelector("span"); // 클릭된 a 태그 안의 span 태그 선택
+    underLine.style.left = spanElement.offsetLeft + "px"; // span 태그의 위치
+    underLine.style.width = spanElement.offsetWidth + "px"; // span 태그의 너비
+    underLine.style.top = event.currentTarget.offsetTop + event.currentTarget.offsetHeight + "px"; // a 태그의 아래쪽
+}
+
+// 페이지 로드 시 기본으로 첫 번째 탭에 대해 #under-line 설정
 window.addEventListener('load', () => {
     const firstTab = underLineMenu[0]; // 첫 번째 탭
     underLine.style.left = firstTab.offsetLeft + "px"; // 첫 번째 탭의 위치
@@ -181,7 +117,3 @@ window.addEventListener('resize', () => {
         underLine.style.top = activeTab.offsetTop + activeTab.offsetHeight + "px";
     }
 });
-
-function randomIDGenerate(){
-    return '_' + Math.random().toString(36).substr(2, 9);
-}
